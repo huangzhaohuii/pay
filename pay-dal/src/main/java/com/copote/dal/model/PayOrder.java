@@ -1,17 +1,21 @@
 package com.copote.dal.model;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
+@TableName(value = "t_pay_order")
 public class PayOrder implements Serializable {
     /**
      * 支付订单号
      *
      * @mbggenerated
      */
+    @TableId
     private String payOrderId;
 
     /**

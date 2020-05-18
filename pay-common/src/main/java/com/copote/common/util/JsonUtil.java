@@ -49,4 +49,18 @@ public class JsonUtil {
         return (JSONObject) JSONObject.toJSON(object);
     }
 
+    public static String getJsonParam(String[] names, Object[] values) {
+        JSONObject jsonParam = new JSONObject();
+        for (int i = 0; i < names.length; i++) {
+            jsonParam.put(names[i], values[i]);
+        }
+        return jsonParam.toJSONString();
+    }
+
+    public static String getJsonParam(String name, Object value) {
+        JSONObject jsonParam = new JSONObject();
+        jsonParam.put(name, value);
+        return jsonParam.toJSONString();
+    }
+
 }

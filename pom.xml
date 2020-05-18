@@ -11,10 +11,15 @@
     <modules>
         <module>pay-common</module>
         <module>pay-server</module>
-        <module>pay-service</module>
         <module>pay-dal</module>
         <module>pay-web</module>
         <module>pay-gatway</module>
+        <module>pay-web-wx</module>
+        <module>pay-service-wx</module>
+        <module>pay-service-api</module>
+        <module>pay-service</module>
+        <module>pay-service/pay-wechat</module>
+        <module>pay-service-api/pay-wechat-api</module>
     </modules>
 
 
@@ -35,7 +40,7 @@
         <spring.cloud.alibaba.version>2.1.0.RELEASE</spring.cloud.alibaba.version>
         <mybatis.spring.boot.version>1.3.0</mybatis.spring.boot.version>
         <mybatis-spring-boot-starter.version>2.1.1</mybatis-spring-boot-starter.version>
-        <hutool-all.version>5.1.0</hutool-all.version>
+        <hutool-all.version>5.3.4</hutool-all.version>
         <fastjson.version>1.2.54</fastjson.version>
         <slf4j-api.version>1.7.7</slf4j-api.version>
         <commons-lang3.version>3.5</commons-lang3.version>
@@ -96,7 +101,7 @@
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis-spring-boot-starter.version}</version>
+                <version>2.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -143,6 +148,11 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus</artifactId>
                 <version>${mybatisplus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool-all.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

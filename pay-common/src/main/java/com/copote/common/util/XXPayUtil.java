@@ -33,9 +33,15 @@ public class XXPayUtil {
 
     public static Map<String, Object> makeRetMap(String retCode, String retMsg, String resCode, PayEnum payEnum) {
         Map<String, Object> retMap = new HashMap<String, Object>();
-        if(retCode != null) retMap.put(PayConstant.RETURN_PARAM_RETCODE, retCode);
-        if(retMsg != null) retMap.put(PayConstant.RETURN_PARAM_RETMSG, retMsg);
-        if(resCode != null) retMap.put(PayConstant.RESULT_PARAM_RESCODE, resCode);
+        if(retCode != null){
+            retMap.put(PayConstant.RETURN_PARAM_RETCODE, retCode);
+        }
+        if(retMsg != null) {
+            retMap.put(PayConstant.RETURN_PARAM_RETMSG, retMsg);
+        }
+        if(resCode != null) {
+            retMap.put(PayConstant.RESULT_PARAM_RESCODE, resCode);
+        }
         if(payEnum != null) {
             retMap.put(PayConstant.RESULT_PARAM_ERRCODE, payEnum.getCode());
             retMap.put(PayConstant.RESULT_PARAM_ERRCODEDES, payEnum.getMessage());
@@ -93,13 +99,17 @@ public class XXPayUtil {
     }
 
     public static String genUrlParams(Map<String, Object> paraMap) {
-        if(paraMap == null || paraMap.isEmpty()) return "";
+        if(paraMap == null || paraMap.isEmpty()) {
+            return "";
+        }
         StringBuffer urlParam = new StringBuffer();
         Set<String> keySet = paraMap.keySet();
         int i = 0;
         for(String key:keySet) {
             urlParam.append(key).append("=").append(paraMap.get(key));
-            if(++i == keySet.size()) break;
+            if(++i == keySet.size()) {
+                break;
+            }
             urlParam.append("&");
         }
         return urlParam.toString();
