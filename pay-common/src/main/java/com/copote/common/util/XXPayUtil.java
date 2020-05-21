@@ -98,6 +98,11 @@ public class XXPayUtil {
         return true;
     }
 
+    /**
+     * 改变参数格式   map -> xxx=xxx&zzz=zzz
+     * @param paraMap
+     * @return
+     */
     public static String genUrlParams(Map<String, Object> paraMap) {
         if(paraMap == null || paraMap.isEmpty()) {
             return "";

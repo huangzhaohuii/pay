@@ -31,8 +31,8 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderDao, PayOrder> impl
     @Override
     public PayOrder selectPayOrderByMchIdAndPayOrderId(String mchId, String payOrderId) {
         QueryWrapper<PayOrder> wrapper = new QueryWrapper<>();
-        wrapper.eq("mchId",mchId)
-                .eq("payOrderId",payOrderId);
+        wrapper.eq("mch_id",mchId)
+                .eq("pay_order_id",payOrderId);
         return baseMapper.selectOne(wrapper);
 
     }
@@ -40,8 +40,8 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderDao, PayOrder> impl
     @Override
     public PayOrder selectPayOrderByMchIdAndMchOrderNo(String mchId, String mchOrderNo) {
         QueryWrapper<PayOrder> wrapper = new QueryWrapper<>();
-        wrapper.eq("mchId",mchId)
-                .eq("mchOrderNo",mchOrderNo);
+        wrapper.eq("mch_id",mchId)
+                .eq("mch_order_no",mchOrderNo);
         return baseMapper.selectList(wrapper).get(0);
 
     }
@@ -49,8 +49,8 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderDao, PayOrder> impl
     @Override
     public int updateStatus4Ing(String payOrderId, String channelOrderNo) {
         UpdateWrapper<PayOrder> wrapper = new UpdateWrapper<>();
-        wrapper.eq("payOrderId",payOrderId)
-                .eq("channelOrderNo",channelOrderNo)
+        wrapper.eq("pay_order_id",payOrderId)
+                .eq("channel_order_no",channelOrderNo)
                 .eq("status",PayConstant.PAY_STATUS_PAYING);
         return baseMapper.update(new PayOrder(),wrapper);
 
@@ -59,9 +59,9 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderDao, PayOrder> impl
     @Override
     public int updateStatus4Success(String payOrderId) {
         UpdateWrapper<PayOrder> wrapper = new UpdateWrapper<>();
-        wrapper.eq("payOrderId",payOrderId)
+        wrapper.eq("pay_order_d",payOrderId)
                 .eq("status",PayConstant.PAY_STATUS_SUCCESS)
-                .eq("paySuccTime",System.currentTimeMillis());
+                .eq("pay_succ_time",System.currentTimeMillis());
         return baseMapper.update(new PayOrder(),wrapper);
 
     }
@@ -69,7 +69,7 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderDao, PayOrder> impl
     @Override
     public int updateStatus4Complete(String payOrderId) {
         UpdateWrapper<PayOrder> wrapper = new UpdateWrapper<>();
-        wrapper.eq("payOrderId",payOrderId)
+        wrapper.eq("pay_order_id",payOrderId)
                 .eq("status",PayConstant.PAY_STATUS_COMPLETE);
         return baseMapper.update(new PayOrder(),wrapper);
     }

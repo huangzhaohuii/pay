@@ -22,19 +22,19 @@ import java.util.Map;
  */
 @RestController
 @Slf4j
-public class MchInfoServiceController {
+public class MchInfoController {
 
     @Autowired
     private MchInfoService mchInfoService;
 
     /**
      * 查询商户
-     * @param map
+     * @param params
      * @return
      */
     @RequestMapping(value = "/mch_info/select")
-    public R selectMchInfo(@RequestBody Map<String,Object> map) {
-        String mchId = (String) map.get("mchId");
+    public R selectMchInfo(@RequestBody Map<String,Object> params) {
+        String mchId = (String) params.get("mchId");
         MchInfo mchInfo = mchInfoService.getById(mchId);
         if(BeanUtil.isEmpty(mchInfo)) {
             return R.error("该商户信息不存在");

@@ -1,14 +1,13 @@
 package com.copote.wechat.controller;
 
+import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.copote.common.constant.PayConstant;
 import com.copote.common.exception.R;
-import com.copote.common.util.JsonUtil;
-import com.copote.common.util.MySeq;
-import com.copote.common.util.RUtil;
-import com.copote.common.util.XXPayUtil;
+import com.copote.common.util.*;
 import com.copote.common.validator.ValidatorUtils;
+import com.copote.wechat.entity.PayOrder;
 import com.copote.wechat.entity.WeChatEntity;
 import com.copote.wechat.service.MchInfoService;
 import com.copote.wechat.service.PayChannelService;
@@ -24,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
 
 /**
  * @author Administrator
@@ -43,12 +44,6 @@ public class PayOrderController {
     private PayOrderService payOrderService;
 
     @Autowired
-    private PayChannelService payChannelService;
-
-    @Autowired
-    private MchInfoService mchInfoService;
-
-    @Autowired
     private ValidateWeChatParamsUtil validateWeChatParamsUtil;
 
     /**
@@ -57,36 +52,36 @@ public class PayOrderController {
      * 2)验证通过创建支付订单
      * 3)根据商户选择渠道,调用支付服务进行下单
      * 4)返回下单数据
-     * @param weChatEntity
+     * @param payOrder
      * @return
      */
-    @RequestMapping(value = "/create_order")
-    public R payOrder(@RequestBody WeChatEntity weChatEntity) {
+    @RequestMapping(value = "/create")
+    public R payOrder(@RequestBody PayOrder payOrder) {
         log.info("###### 开始接收w微信统一下单请求 ######");
         String logPrefix = "【商户统一下单】";
         try {
-            JSONObject payOrder = null;
             //先检验参数的有效性
-            ValidatorUtils.validateEntity(weChatEntity);
-            R r = validateWeChatParamsUtil.validateParams(weChatEntity);
+            ValidatorUtils.validateEntity(payOrder);
+            //二次校验参数(主要是为了验证签名)
+            R r = validateWeChatParamsUtil.validateParams(payOrder);
             if(RUtil.checkErro(r)){
                 return r;
             }
-            r = payOrderService.createPayOrder(weChatEntity);
+            r = payOrderService.createPayOrder(payOrder);
             if(RUtil.checkErro(r)){
                 return R.error("创建微信支付订单失败");
             }
             log.info("{}创建支付订单失败", logPrefix);
-            String channelId = payOrder.getString("channelId");
+            String channelId = payOrder.getChannelId();
             switch (channelId) {
                 case PayConstant.PAY_CHANNEL_WX_APP :
-                    return payOrderService.doWxPayReq(JsonUtil.getJsonParam(new String[]{"tradeType", "payOrder"}, new Object[]{PayConstant.WxConstant.TRADE_TYPE_APP, weChatEntity}));
+                    return payOrderService.doWxPayReq(MapUtils.getMapParams(new String[]{"tradeType", "payOrder"}, new Object[]{PayConstant.WxConstant.TRADE_TYPE_APP, payOrder}));
                 case PayConstant.PAY_CHANNEL_WX_JSAPI :
-                    return payOrderService.doWxPayReq(JsonUtil.getJsonParam(new String[]{"tradeType", "payOrder"}, new Object[]{PayConstant.WxConstant.TRADE_TYPE_JSPAI, weChatEntity}));
+                    return payOrderService.doWxPayReq(MapUtils.getMapParams(new String[]{"tradeType", "payOrder"}, new Object[]{PayConstant.WxConstant.TRADE_TYPE_JSPAI, payOrder}));
                 case PayConstant.PAY_CHANNEL_WX_NATIVE :
-                    return payOrderService.doWxPayReq(JsonUtil.getJsonParam(new String[]{"tradeType", "payOrder"}, new Object[]{PayConstant.WxConstant.TRADE_TYPE_NATIVE, weChatEntity}));
+                    return payOrderService.doWxPayReq(MapUtils.getMapParams(new String[]{"tradeType", "payOrder"}, new Object[]{PayConstant.WxConstant.TRADE_TYPE_NATIVE, payOrder}));
                 case PayConstant.PAY_CHANNEL_WX_MWEB :
-                    return payOrderService.doWxPayReq(JsonUtil.getJsonParam(new String[]{"tradeType", "payOrder"}, new Object[]{PayConstant.WxConstant.TRADE_TYPE_MWEB, weChatEntity}));
+                    return payOrderService.doWxPayReq(MapUtils.getMapParams(new String[]{"tradeType", "payOrder"}, new Object[]{PayConstant.WxConstant.TRADE_TYPE_MWEB, payOrder}));
                 default:
                     return R.error("微信支付渠道错误");
             }

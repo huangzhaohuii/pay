@@ -20,8 +20,8 @@ public class PayChannelServiceImpl extends ServiceImpl<PayChannelDao, PayChannel
     @Override
     public PayChannel selectPayChannel(String channelId, String mchId) {
         QueryWrapper<PayChannel> wrapper = new QueryWrapper<>();
-        wrapper.eq("channelId",channelId)
-                .eq("mchId",mchId);
+        wrapper.eq("channel_id",channelId)
+                .eq("mch_id",mchId);
         return baseMapper.selectList(wrapper).get(0);
     }
 }

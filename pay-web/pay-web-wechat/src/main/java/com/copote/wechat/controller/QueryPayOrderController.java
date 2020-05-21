@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.copote.common.constant.PayConstant;
 import com.copote.common.exception.R;
 import com.copote.common.util.JsonUtil;
+import com.copote.common.util.MapUtils;
 import com.copote.common.util.RUtil;
 import com.copote.common.util.XXPayUtil;
 import com.copote.wechat.service.MchInfoService;
@@ -54,7 +55,7 @@ public class QueryPayOrderController {
      * @param params
      * @return
      */
-    @RequestMapping(value = "/query_order")
+    @RequestMapping(value = "/query")
     public R queryPayOrder(@RequestBody Map<String,String> params) {
         log.info("###### 开始接收商户查询支付订单请求 ######");
         String logPrefix = "【商户支付订单查询】";
@@ -75,7 +76,7 @@ public class QueryPayOrderController {
             // 是否执行回调
             String executeNotify = params.get("executeNotify");
             JSONObject payOrder;
-            r = payOrderService.queryPayOrder(JsonUtil.getJsonParam(new String[]{"mchId", "payOrderId", "mchOrderNo", "executeNotify"}, new Object[]{mchId, payOrderId, mchOrderNo, executeNotify}));
+            r = payOrderService.queryPayOrder(MapUtils.getMapParams(new String[]{"mchId", "payOrderId", "mchOrderNo", "executeNotify"}, new Object[]{mchId, payOrderId, mchOrderNo, executeNotify}));
             if(RUtil.checkErro(r)) {
                 log.info("{}查询支付订单失败", logPrefix);
                 return R.error("查询支付订单失败");

@@ -38,7 +38,7 @@ public class Notify4BasePay {
 	private MchInfoService mchInfoService;
 
 	/**
-	 * 创建响应URL
+	 * 创建响应URL及参数
 	 * @param payOrder
 	 * @param backType 1：前台页面；2：后台接口
 	 * @return

@@ -1,5 +1,6 @@
 package com.copote.wechat.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,124 +17,185 @@ import lombok.NoArgsConstructor;
 public class WeChatEntity {
 
     /**
-     * 渠道
+     * 行政事项类型
      */
-    private String channelId;
+    private String xzsxlx;
 
     /**
-     * 公众号id
+     * 支付订单号
+     *
+     * @mbggenerated
      */
-    private String appid;
-
+    @TableId
+    private String payOrderId;
 
     /**
-     * 商户号
+     * 商户ID
+     *
+     * @mbggenerated
      */
     private String mchId;
 
     /**
-     * 设备号
+     * 商户订单号
+     *
+     * @mbggenerated
      */
-    private String deviceInfo;
+    private String mchOrderNo;
 
     /**
-     * 随机字符串
+     * 渠道ID
+     *
+     * @mbggenerated
      */
-    private String nonceStr;
+    private String channelId;
 
     /**
-     * 签名
+     * 支付金额,单位分
+     *
+     * @mbggenerated
      */
-    private String sign;
+    private Long amount;
 
     /**
-     * 签名类型
+     * 三位货币代码,人民币:cny
+     *
+     * @mbggenerated
      */
-    private String signType;
+    private String currency;
 
     /**
-     * 商品描述
+     * 支付状态,0-订单生成,1-支付中(目前未使用),2-支付成功,3-业务处理完成
+     *
+     * @mbggenerated
+     */
+    private Byte status;
+
+    /**
+     * 客户端IP
+     *
+     * @mbggenerated
+     */
+    private String clientIp;
+
+    /**
+     * 设备
+     *
+     * @mbggenerated
+     */
+    private String device;
+
+    /**
+     * 商品标题
+     *
+     * @mbggenerated
+     */
+    private String subject;
+
+    /**
+     * 商品描述信息
+     *
+     * @mbggenerated
      */
     private String body;
 
     /**
-     * 商品详情
+     * 特定渠道发起时额外参数
+     *
+     * @mbggenerated
      */
-    private String detail;
+    private String extra;
 
     /**
-     * 附加数据
+     * 渠道商户ID
+     *
+     * @mbggenerated
      */
-    private String attach;
+    private String channelMchId;
 
     /**
-     * 商户订单号
+     * 渠道订单号
+     *
+     * @mbggenerated
      */
-    private String outTradeNo	;
+    private String channelOrderNo;
 
     /**
-     * 货币类型
+     * 渠道支付错误码
+     *
+     * @mbggenerated
      */
-    private String feeType;
+    private String errCode;
 
     /**
-     * 总金额
+     * 渠道支付错误描述
+     *
+     * @mbggenerated
      */
-    private String totalFee;
+    private String errMsg;
 
     /**
-     * 终端IP
+     * 扩展参数1
+     *
+     * @mbggenerated
      */
-    private String spbillCreateIp;
+    private String param1;
 
     /**
-     * 交易起始时间
+     * 扩展参数2
+     *
+     * @mbggenerated
      */
-    private String timeStart;
-
-    /**
-     * 交易结束时间
-     */
-    private String timeExpire;
-
-    /**
-     * 商品标记
-     */
-    private String goodsTag;
+    private String param2;
 
     /**
      * 通知地址
+     *
+     * @mbggenerated
      */
     private String notifyUrl;
 
     /**
-     * 交易类型
+     * 通知次数
+     *
+     * @mbggenerated
      */
-    private String tradeType;
+    private Byte notifyCount;
 
     /**
-     * 商品ID
+     * 最后一次通知时间
+     *
+     * @mbggenerated
      */
-    private String productId;
+    private Long lastNotifyTime;
 
     /**
-     * 指定支付方式
+     * 订单失效时间
+     *
+     * @mbggenerated
      */
-    private String limitPay;
+    private Long expireTime;
 
     /**
-     * 用户标识
+     * 订单支付成功时间
+     *
+     * @mbggenerated
      */
-    private String openid;
+    private Long paySuccTime;
 
     /**
-     * 电子发票入口开放标识
+     * 创建时间
+     *
+     * @mbggenerated
      */
-    private String receipt;
+    private String createTime;
 
     /**
-     * 场景信息
+     * 更新时间
+     *
+     * @mbggenerated
      */
-    private String sceneInfo;
+    private String updateTime;
 
+    private String sign;
 }

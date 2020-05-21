@@ -89,6 +89,10 @@ public class Mq4PayNotify {
         }
     }
 
+    /**
+     * 队列通知第三方接入支付结果
+     * @param msg
+     */
     @JmsListener(destination = MqConfig.PAY_NOTIFY_QUEUE_NAME)
     public void receive(String msg) {
         _log.info("do notify task, msg={}", msg);

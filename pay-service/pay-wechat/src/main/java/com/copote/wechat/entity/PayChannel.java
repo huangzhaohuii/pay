@@ -1,17 +1,21 @@
 package com.copote.wechat.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
+@TableName("t_pay_channel")
 public class PayChannel implements Serializable {
     /**
      * 渠道主键ID
      *
      * @mbggenerated
      */
+    @TableId
     private Integer id;
 
     /**

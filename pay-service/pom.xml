@@ -15,6 +15,11 @@
         <module>pay-alipay</module>
     </modules>
 
+    <properties>
+        <druid.version>1.1.13</druid.version>
+        <mybatisplus.version>3.0.7.1</mybatisplus.version>
+    </properties>
+
     <dependencies>
         <!-- 自己的工具包-->
         <dependency>
@@ -22,11 +27,11 @@
             <artifactId>pay-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.copote</groupId>
-            <artifactId>pay-dal</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.copote</groupId>-->
+<!--            <artifactId>pay-dal</artifactId>-->
+<!--            <version>${project.version}</version>-->
+<!--        </dependency>-->
         <!--nacos-config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

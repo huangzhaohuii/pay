@@ -7,6 +7,7 @@ import com.copote.wechat.service.PayOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,8 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequestMapping("/pay")
-public class PayOrderServiceController extends Notify4BasePay {
+@RefreshScope
+public class PayOrderController extends Notify4BasePay {
 
     @Autowired
     private PayOrderService payOrderService;
@@ -36,28 +38,24 @@ public class PayOrderServiceController extends Notify4BasePay {
     @RequestMapping(value = "/create")
     public R createPayOrder(@RequestBody PayOrder payOrder) {
         log.info("接收创建支付订单请求,payOrder={}", payOrder);
-        try {
-            int result = payOrderService.createPayOrder(payOrder);
-            if(result <= 0){
-                return R.error("新增失败");
-            }
-        }catch (Exception e) {
-            return R.error("新增失败"+e);
+        boolean result = payOrderService.save(payOrder);
+        if(!result){
+            return R.error("新增失败");
         }
         return R.ok();
     }
 
     /**
-     * 查询订单
-     * @param map
+     * 查询订单(包含是否回调第三方业务)
+     * @param params
      * @return
      */
     @RequestMapping(value = "/query")
-    public R queryPayOrder(@RequestBody Map<String,Object> map) {
-        log.info("selectPayOrder << {}", map);
-        String mchId = (String) map.get("mchId");
-        String payOrderId = (String) map.get("payOrderId");
-        String mchOrderNo = (String) map.get("mchOrderNo");
+    public R queryPayOrder(@RequestBody Map<String,Object> params) {
+        log.info("selectPayOrder << {}", params);
+        String mchId = (String) params.get("mchId");
+        String payOrderId = (String) params.get("payOrderId");
+        String mchOrderNo = (String) params.get("mchOrderNo");
         PayOrder payOrder;
         if(StringUtils.isNotBlank(payOrderId)) {
             payOrder = payOrderService.selectPayOrderByMchIdAndPayOrderId(mchId, payOrderId);
@@ -68,12 +66,12 @@ public class PayOrderServiceController extends Notify4BasePay {
             return R.error("订单不存在");
         }
         //是否回调
-        boolean executeNotify = (boolean) map.get("executeNotify");
+        boolean executeNotify = (boolean) params.get("executeNotify");
         // 如果选择回调且支付状态为支付成功,则回调业务系统
         if(executeNotify && payOrder.getStatus() == PayConstant.PAY_STATUS_SUCCESS) {
             this.doNotify(payOrder);
         }
-        return R.ok().put("Object",payOrder);
+        return R.ok().put("data",payOrder);
     }
 
 }

@@ -1,12 +1,15 @@
 package com.copote.wechat.service;
 
 import com.copote.common.exception.R;
+import com.copote.wechat.entity.PayOrder;
 import com.copote.wechat.entity.WeChatEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 /**
  * @author Administrator
@@ -20,26 +23,26 @@ public interface PayOrderService {
 
     /**
      * 创建支付订单
-     * @param weChatEntity
+     * @param payOrder
      * @return
      */
     @RequestMapping(value = "/pay/create")
-    public R createPayOrder(@RequestBody WeChatEntity weChatEntity);
+    R createPayOrder(@RequestBody PayOrder payOrder);
 
     /**
      * 查询支付订单
-     * @param jsonParam
+     * @param params
      * @return
      */
     @RequestMapping(value = "/pay/query")
-    public R queryPayOrder(@RequestParam String jsonParam);
+    R queryPayOrder(@RequestBody Map<String,Object> params);
 
     /**
      * 处理微信支付
-     * @param jsonParam
+     * @param params
      * @return
      */
     @RequestMapping(value = "/pay/channel/wx")
-    public R doWxPayReq(@RequestParam String jsonParam);
+    R doWxPayReq(@RequestBody Map<String,Object> params);
 
 }

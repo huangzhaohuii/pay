@@ -128,7 +128,7 @@ public class Notify4AliPayController extends Notify4BasePay {
 		log.info("====== 完成接收支付宝支付回调通知 ======");
 		return PayConstant.RETURN_ALIPAY_VALUE_SUCCESS;
 	}
-	
+
 	/**
 	 * 验证支付宝支付通知参数
 	 * @return

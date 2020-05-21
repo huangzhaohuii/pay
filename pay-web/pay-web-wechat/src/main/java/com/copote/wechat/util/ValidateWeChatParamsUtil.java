@@ -10,6 +10,7 @@ import com.copote.common.util.JsonUtil;
 import com.copote.common.util.MySeq;
 import com.copote.common.util.RUtil;
 import com.copote.common.util.XXPayUtil;
+import com.copote.wechat.entity.PayOrder;
 import com.copote.wechat.entity.WeChatEntity;
 import com.copote.wechat.service.MchInfoService;
 import com.copote.wechat.service.PayChannelService;
@@ -40,16 +41,16 @@ public class ValidateWeChatParamsUtil {
 
     /**
      * 验证签名信息
-     * @param weChatEntity
+     * @param payOrder
      * @return
      */
-    public R validateParams(WeChatEntity weChatEntity) {
+    public R validateParams(PayOrder payOrder) {
         // 商户ID
-        String mchId = weChatEntity.getMchId();
+        String mchId = payOrder.getMchId();
         // 渠道ID
-        String channelId = weChatEntity.getChannelId();
+        String channelId = payOrder.getChannelId();
         // 签名
-        String sign = weChatEntity.getSign();
+        String sign = payOrder.getSign();
 
         // 签名信息
         if (StringUtils.isEmpty(sign)) {
@@ -71,7 +72,7 @@ public class ValidateWeChatParamsUtil {
         }
 
         // 验证签名数据
-        boolean verifyFlag = XXPayUtil.verifyPaySign(BeanUtil.beanToMap(weChatEntity), reqKey);
+        boolean verifyFlag = XXPayUtil.verifyPaySign(BeanUtil.beanToMap(payOrder), reqKey);
         if(!verifyFlag) {
             return R.error("签名错误");
         }

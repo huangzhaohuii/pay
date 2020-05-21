@@ -89,7 +89,7 @@ public class Mq4PayNotify {
         }
     }
 
-    @JmsListener(destination = MqConfig.PAY_NOTIFY_QUEUE_NAME)
+//    @JmsListener(destination = MqConfig.PAY_NOTIFY_QUEUE_NAME)
     public void receive(String msg) {
         _log.info("do notify task, msg={}", msg);
         JSONObject msgObj = JSON.parseObject(msg);

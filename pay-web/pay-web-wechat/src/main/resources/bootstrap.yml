@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: pay-web
+    name: pay-web-wechat
   cloud:
     nacos:
       discovery:

@@ -14,7 +14,7 @@ import java.io.File;
 public class WxPayUtil {
 
     /**
-     * 获取微信支付配置
+     * 获取微信支付配置(商户号，appId,key)
      * @param configParam
      * @param tradeType
      * @param certRootPath

@@ -1,11 +1,9 @@
 package com.copote.wechat.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author: HUANG
@@ -14,7 +12,6 @@ import java.util.Date;
  * @version V1.0
  */
 @Data
-@TableName(value = "t_pay_order")
 public class PayOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -199,5 +196,10 @@ public class PayOrder implements Serializable {
      * @mbggenerated
      */
     private String updateTime;
+
+    /**
+     * 签名
+     */
+    private String sign;
 
 }

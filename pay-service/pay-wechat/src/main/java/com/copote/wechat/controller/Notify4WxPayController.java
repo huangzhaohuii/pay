@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * @author Administrator
  * @create 2020/5/11
- * @Description: 接收处理微信通知
+ * @Description: 接收处理微信通知(微信回调)
  * @since 1.0.0
  */
 @RestController

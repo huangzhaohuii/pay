@@ -14,8 +14,6 @@
         <module>pay-dal</module>
         <module>pay-web</module>
         <module>pay-gatway</module>
-        <module>pay-web-wx</module>
-        <module>pay-service-wx</module>
         <module>pay-service-api</module>
         <module>pay-service</module>
         <module>pay-service/pay-wechat</module>

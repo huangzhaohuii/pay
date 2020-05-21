@@ -9,9 +9,12 @@ import com.copote.wechat.entity.PayChannel;
 import com.copote.wechat.service.PayChannelService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * @Description: 支付渠道接口
@@ -21,23 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
  * @Copyright: www.xxpay.org
  */
 @RestController
-public class PayChannelServiceController {
+public class PayChannelController {
 
-    private final MyLog _log = MyLog.getLog(PayChannelServiceController.class);
+    private final MyLog _log = MyLog.getLog(PayChannelController.class);
 
     @Autowired
     private PayChannelService payChannelService;
 
     @RequestMapping(value = "/pay_channel/select")
-    public R selectPayChannel(@RequestParam String jsonParam) {
-        // TODO 参数校验
-        _log.info("selectPayChannel << {}", jsonParam);
-        if(StringUtils.isBlank(jsonParam)) {
-            R.error("参数错误");
-        }
-        JSONObject paramObj = JSON.parseObject(new String(MyBase64.decode(jsonParam)));
-        String channelId = paramObj.getString("channelId");
-        String mchId = paramObj.getString("mchId");
+    public R selectPayChannel(@RequestBody Map<String,Object> params) {
+        String channelId = (String) params.get("channelId");
+        String mchId = (String) params.get("mchId");
         PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
         if(payChannel == null) {
             R.error("数据对象不存在");
