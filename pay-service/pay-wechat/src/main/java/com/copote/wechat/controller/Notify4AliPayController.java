@@ -159,7 +159,7 @@ public class Notify4AliPayController extends Notify4BasePay {
 		// 查询payChannel记录
 		String mchId = payOrder.getMchId();
 		String channelId = payOrder.getChannelId();
-		PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+		PayChannel payChannel = payChannelService.selectPayChannel(channelId);
 		if(payChannel == null) {
 			log.error("Can't found payChannel form db. mchId={} channelId={}, ", payOrderId, mchId, channelId);
 			payContext.put("retMsg", "Can't found payChannel");

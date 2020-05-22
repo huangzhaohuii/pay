@@ -1,8 +1,7 @@
 package com.copote.wechat.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.copote.common.exception.R;
 import com.copote.wechat.entity.MchInfo;
 import com.copote.wechat.service.MchInfoService;
@@ -29,17 +28,17 @@ public class MchInfoController {
 
     /**
      * 查询商户
-     * @param params
+     * @param mchId
      * @return
      */
     @RequestMapping(value = "/mch_info/select")
-    public R selectMchInfo(@RequestBody Map<String,Object> params) {
-        String mchId = (String) params.get("mchId");
+    public R selectMchInfo(@RequestBody String mchId) {
+        //到时候要用redis
         MchInfo mchInfo = mchInfoService.getById(mchId);
         if(BeanUtil.isEmpty(mchInfo)) {
             return R.error("该商户信息不存在");
         }
-        return R.ok().put("result",mchInfo);
+        return R.ok().put("data",mchInfo);
     }
 
 

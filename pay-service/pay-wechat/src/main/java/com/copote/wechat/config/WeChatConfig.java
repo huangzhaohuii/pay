@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnClass(WxPayService.class)
-@EnableConfigurationProperties(WxPayProperties.class)
+//@EnableConfigurationProperties(WxPayProperties.class)
 @AllArgsConstructor
 public class WeChatConfig {
 
@@ -29,13 +29,13 @@ public class WeChatConfig {
     public WxPayService wxService() {
         WxPayConfig payConfig = new WxPayConfig();
         //APPID
-        payConfig.setAppId(StringUtils.trimToNull("111"));
+        payConfig.setAppId(StringUtils.trimToNull("wx2a39fb4a8b2c78f4"));
         //商户号
-        payConfig.setMchId(StringUtils.trimToNull("111"));
+        payConfig.setMchId(StringUtils.trimToNull("1269253701"));
         //商户key
-        payConfig.setMchKey(StringUtils.trimToNull("111"));
+        payConfig.setMchKey(StringUtils.trimToNull("098f6bcd4621d373cade4e832627b4f6"));
         //密钥路径
-        payConfig.setKeyPath(StringUtils.trimToNull("111"));
+        payConfig.setKeyPath(StringUtils.trimToNull("d:/apiclient_cert.p12"));
 
         // 可以指定是否使用沙箱环境
         payConfig.setUseSandboxEnv(false);

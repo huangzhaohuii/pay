@@ -80,11 +80,5 @@ public interface PayOrderService extends IService<PayOrder> {
      */
     int updateNotify(PayOrder payOrder);
 
-    /**
-     * 更新订单
-     * @param payOrder
-     * @return
-     */
-    int update(PayOrder payOrder);
 
 }

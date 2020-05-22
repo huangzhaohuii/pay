@@ -90,9 +90,5 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderDao, PayOrder> impl
         return baseMapper.updateById(payOrder);
     }
 
-    @Override
-    public int update(PayOrder payOrder) {
-        return 0;
-    }
 
 }

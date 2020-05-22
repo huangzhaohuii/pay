@@ -4,6 +4,7 @@ import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayReportRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayBillResult;
 import com.github.binarywang.wxpay.bean.result.WxPayOrderCloseResult;
 import com.github.binarywang.wxpay.bean.result.WxPayRefundQueryResult;
 import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
@@ -62,7 +63,7 @@ public interface WeChatOrderService {
      * @param deviceInfo
      * @return
      */
-    String	downloadRawBill(String billDate, String billType, String tarType, String deviceInfo);
+    WxPayBillResult downloadRawBill(String billDate, String billType, String tarType, String deviceInfo) throws WxPayException;
 
     /**
      * 解析支付结果通知

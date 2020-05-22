@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.copote.wechat.dao.PayChannelDao;
 import com.copote.wechat.entity.PayChannel;
 import com.copote.wechat.service.PayChannelService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,10 +19,10 @@ public class PayChannelServiceImpl extends ServiceImpl<PayChannelDao, PayChannel
 
 
     @Override
-    public PayChannel selectPayChannel(String channelId, String mchId) {
+    public PayChannel selectPayChannel(@Param("channelName") String channelName) {
         QueryWrapper<PayChannel> wrapper = new QueryWrapper<>();
-        wrapper.eq("channel_id",channelId)
-                .eq("mch_id",mchId);
+        wrapper.eq("channel_name",channelName)
+                .eq("state",1);
         return baseMapper.selectList(wrapper).get(0);
     }
 }

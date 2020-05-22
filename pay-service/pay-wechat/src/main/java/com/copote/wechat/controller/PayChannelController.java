@@ -1,20 +1,16 @@
 package com.copote.wechat.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.core.util.ObjectUtil;
 import com.copote.common.exception.R;
-import com.copote.common.util.MyBase64;
 import com.copote.common.util.MyLog;
 import com.copote.wechat.entity.PayChannel;
 import com.copote.wechat.service.PayChannelService;
-import org.apache.commons.lang.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 
 /**
  * @Description: 支付渠道接口
@@ -24,23 +20,19 @@ import java.util.Map;
  * @Copyright: www.xxpay.org
  */
 @RestController
+@Slf4j
 public class PayChannelController {
-
-    private final MyLog _log = MyLog.getLog(PayChannelController.class);
 
     @Autowired
     private PayChannelService payChannelService;
 
     @RequestMapping(value = "/pay_channel/select")
-    public R selectPayChannel(@RequestBody Map<String,Object> params) {
-        String channelId = (String) params.get("channelId");
-        String mchId = (String) params.get("mchId");
-        PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
-        if(payChannel == null) {
-            R.error("数据对象不存在");
+    public R selectPayChannel(@RequestBody String channelName) {
+        PayChannel payChannel = payChannelService.selectPayChannel(channelName);
+        if(ObjectUtil.isNull(payChannel)) {
+            R.error("渠道不存在");
         }
-        _log.info("selectPayChannel >> {}", payChannel);
-        return R.ok().put("result",payChannel);
+        return R.ok().put("data",payChannel);
     }
 
 

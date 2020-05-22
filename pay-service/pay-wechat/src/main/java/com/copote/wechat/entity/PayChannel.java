@@ -7,6 +7,13 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+
+/**
+ * @author: HUANG
+ * @date:  2020-05-22 15:40
+ * @Description: 渠道信息
+ * @version V1.0
+ */
 @Data
 @TableName("t_pay_channel")
 public class PayChannel implements Serializable {
@@ -19,32 +26,11 @@ public class PayChannel implements Serializable {
     private Integer id;
 
     /**
-     * 渠道ID
-     *
-     * @mbggenerated
-     */
-    private String channelId;
-
-    /**
      * 渠道名称,如:alipay,wechat
      *
      * @mbggenerated
      */
     private String channelName;
-
-    /**
-     * 渠道商户ID
-     *
-     * @mbggenerated
-     */
-    private String channelMchId;
-
-    /**
-     * 商户ID
-     *
-     * @mbggenerated
-     */
-    private String mchId;
 
     /**
      * 渠道状态,0-停止使用,1-使用中
@@ -53,12 +39,6 @@ public class PayChannel implements Serializable {
      */
     private Byte state;
 
-    /**
-     * 配置参数,json字符串
-     *
-     * @mbggenerated
-     */
-    private String param;
 
     /**
      * 备注

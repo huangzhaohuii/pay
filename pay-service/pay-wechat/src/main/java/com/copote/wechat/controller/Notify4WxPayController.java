@@ -1,10 +1,13 @@
 package com.copote.wechat.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.copote.common.constant.PayConstant;
 import com.copote.common.util.MyLog;
 import com.copote.wechat.channel.wechat.WxPayUtil;
+import com.copote.wechat.entity.Customer;
 import com.copote.wechat.entity.PayChannel;
 import com.copote.wechat.entity.PayOrder;
+import com.copote.wechat.service.CustomerService;
 import com.copote.wechat.service.PayChannelService;
 import com.copote.wechat.service.PayOrderService;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
@@ -46,6 +49,9 @@ public class Notify4WxPayController extends Notify4BasePay {
 	@Autowired
 	private PayChannelService payChannelService;
 
+	@Autowired
+	private CustomerService customerService;
+
 	/**
 	 * 微信支付(统一下单接口)后台通知响应
 	 * @param request
@@ -74,8 +80,6 @@ public class Notify4WxPayController extends Notify4BasePay {
 				return WxPayNotifyResponse.fail((String) payContext.get("retMsg"));
 			}
 			PayOrder payOrder = (PayOrder) payContext.get("payOrder");
-			WxPayConfig wxPayConfig = (WxPayConfig) payContext.get("wxPayConfig");
-			wxPayService.setConfig(wxPayConfig);
 			// 这里做了签名校验(这里又做了一次xml转换对象,可以考虑优化)
 			wxPayService.parseOrderNotifyResult(xmlResult);
 			// 处理订单
@@ -112,12 +116,12 @@ public class Notify4WxPayController extends Notify4BasePay {
 	 * @return
 	 */
 	public boolean verifyWxPayParams(Map<String, Object> payContext) {
+		//微信返回的通知结果
 		WxPayOrderNotifyResult params = (WxPayOrderNotifyResult)payContext.get("parameters");
 
 		//校验结果是否成功
 		if (!PayConstant.RETURN_VALUE_SUCCESS.equalsIgnoreCase(params.getResultCode())
 				&& !PayConstant.RETURN_VALUE_SUCCESS.equalsIgnoreCase(params.getReturnCode())) {
-			_log.error("returnCode={},resultCode={},errCode={},errCodeDes={}", params.getReturnCode(), params.getResultCode(), params.getErrCode(), params.getErrCodeDes());
 			payContext.put("retMsg", "notify data failed");
 			return false;
 		}
@@ -130,27 +134,29 @@ public class Notify4WxPayController extends Notify4BasePay {
 		// 查询payOrder记录
 		PayOrder payOrder = payOrderService.selectPayOrder(out_trade_no);
 		if (payOrder==null) {
-			_log.error("Can't found payOrder form db. payOrderId={}, ", out_trade_no);
 			payContext.put("retMsg", "Can't found payOrder");
 			return false;
 		}
 
 		// 查询payChannel记录
-		String mchId = payOrder.getMchId();
 		String channelId = payOrder.getChannelId();
-		PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+		PayChannel payChannel = payChannelService.selectPayChannel(channelId);
 		if(payChannel == null) {
-			_log.error("Can't found payChannel form db. mchId={} channelId={}, ", out_trade_no, mchId, channelId);
 			payContext.put("retMsg", "Can't found payChannel");
 			return false;
 		}
-		payContext.put("wxPayConfig", WxPayUtil.getWxPayConfig(payChannel.getParam()));
+
+		String ccXzsxlx = payOrder.getXzsxlx();
+		Customer customer = customerService.getById(ccXzsxlx);
+		if(ObjectUtil.isNull(customer)){
+			payContext.put("retMsg", "Can't found customer");
+			return false;
+		}
 
 		// 核对金额
 		long wxPayAmt = new BigDecimal(total_fee).longValue();
 		long dbPayAmt = payOrder.getAmount().longValue();
 		if (dbPayAmt != wxPayAmt) {
-			_log.error("db payOrder record payPrice not equals total_fee. total_fee={},payOrderId={}", total_fee, out_trade_no);
 			payContext.put("retMsg", "total_fee is not the same");
 			return false;
 		}

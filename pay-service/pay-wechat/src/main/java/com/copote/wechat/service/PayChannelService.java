@@ -2,6 +2,7 @@ package com.copote.wechat.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.copote.wechat.entity.PayChannel;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @Description:
@@ -15,10 +16,9 @@ public interface PayChannelService extends IService<PayChannel> {
 
     /**
      * 查询支付渠道
-     * @param channelId
-     * @param mchId
+     * @param channelName
      * @return
      */
-    PayChannel selectPayChannel(String channelId, String mchId);
+    PayChannel selectPayChannel(@Param("channelName")String channelName);
 
 }
