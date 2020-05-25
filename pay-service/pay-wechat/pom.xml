@@ -23,11 +23,6 @@
             <artifactId>pay-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.copote</groupId>-->
-<!--            <artifactId>pay-dal</artifactId>-->
-<!--            <version>${project.version}</version>-->
-<!--        </dependency>-->
         <!--SpringCloud openfeign -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -47,6 +42,11 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <!-- rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
         </dependency>
         <!-- SpringBoot整合Web组件 -->
         <dependency>

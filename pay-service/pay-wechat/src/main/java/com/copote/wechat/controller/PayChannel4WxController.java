@@ -9,8 +9,6 @@ import com.copote.common.exception.R;
 import com.copote.common.util.MyBase64;
 import com.copote.common.util.MyLog;
 import com.copote.common.util.XXPayUtil;
-import com.copote.wechat.channel.wechat.WxPayProperties;
-import com.copote.wechat.channel.wechat.WxPayUtil;
 import com.copote.wechat.entity.MchInfo;
 import com.copote.wechat.entity.PayChannel;
 import com.copote.wechat.entity.PayOrder;
@@ -56,8 +54,6 @@ public class PayChannel4WxController{
     @Autowired
     private MchInfoService mchInfoService;
 
-    @Resource
-    private WxPayProperties wxPayProperties;
 
     /**
      * 发起微信支付(统一下单)
@@ -78,12 +74,13 @@ public class PayChannel4WxController{
                 return R.error("支付密钥为空");
             }
             //查询渠道
-            PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+            PayChannel payChannel = payChannelService.selectPayChannel(channelId);
             //获取微信配置
-            WxPayConfig wxPayConfig = WxPayUtil.getWxPayConfig(payChannel.getParam(), tradeType, wxPayProperties.getCertRootPath(), wxPayProperties.getNotifyUrl());
+            WxPayConfig wxPayConfig = null;
+//            WxPayUtil.getWxPayConfig(payChannel.getParam(), tradeType, wxPayProperties.getCertRootPath(), wxPayProperties.getNotifyUrl());
             //微信服务
             WxPayService wxPayService = new WxPayServiceImpl();
-            wxPayService.setConfig(wxPayConfig);
+//            wxPayService.setConfig(wxPayConfig);
             //构建微信统一下单请求数据
             WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = buildUnifiedOrderRequest(payOrder, wxPayConfig);
             String payOrderId = payOrder.getPayOrderId();

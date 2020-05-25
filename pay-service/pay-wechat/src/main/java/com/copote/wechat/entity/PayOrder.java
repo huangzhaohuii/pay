@@ -1,5 +1,6 @@
 package com.copote.wechat.entity;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -199,5 +200,22 @@ public class PayOrder implements Serializable {
      * @mbggenerated
      */
     private String updateTime;
+
+
+    /**
+     * TRADE_TYPE_NATIVE支付必须参数
+     */
+    private String productId;
+
+    /**
+     * TRADE_TYPE_JSPAI支付必须参数
+     */
+    private String openId;
+
+    /**
+     * H5支付必须参数
+     */
+    private String sceneInfo;
+
 
 }

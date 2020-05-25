@@ -2,23 +2,29 @@ package com.copote.wechat.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.copote.common.constant.PayConstant;
 import com.copote.common.exception.R;
+import com.copote.wechat.entity.Customer;
+import com.copote.wechat.entity.MchInfo;
+import com.copote.wechat.entity.PayChannel;
 import com.copote.wechat.entity.PayOrder;
-import com.copote.wechat.service.PayOrderService;
-import com.copote.wechat.service.WeChatOrderService;
+import com.copote.wechat.properties.WxPayProperties;
+import com.copote.wechat.service.*;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
-import com.github.binarywang.wxpay.bean.result.WxPayBillResult;
-import com.github.binarywang.wxpay.bean.result.WxPayOrderCloseResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundQueryResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.*;
+import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
+import com.github.binarywang.wxpay.util.SignUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,6 +43,65 @@ public class WeChatOrderController {
 
     @Autowired
     private PayOrderService payOrderService;
+
+    @Autowired
+    private MchInfoService mchInfoService;
+
+    @Autowired
+    private PayChannelService payChannelService;
+
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private WxPayProperties wxPayProperties;
+
+    @RequestMapping("/unifiedOrder")
+    public R unifiedOrder(@RequestBody Map<String,Object> params) throws WxPayException {
+        //订单
+        PayOrder payOrder = (PayOrder) params.get("payOrder");
+        //是否回调业务系统？
+        String tradeType = (String) params.get("tradeType");
+        //商户号
+        String mchId = payOrder.getMchId();
+        //渠道号
+        String channelId = payOrder.getChannelId();
+        //订单号
+        String payOrderId = payOrder.getPayOrderId();
+        //行政事项类型
+        String xzsxlx = payOrder.getXzsxlx();
+        Customer customer = customerService.getById(xzsxlx);
+        if(BeanUtil.isEmpty(customer)){
+            return R.error(xzsxlx +"客户信息未接入支付系统！");
+        }
+        //商户信息
+        MchInfo mchInfo = mchInfoService.getById(mchId);
+        //密钥
+        String resKey = mchInfo == null ? "" : mchInfo.getResKey();
+        if(StrUtil.isEmpty(resKey)) {
+            return R.error("支付密钥为空");
+        }
+        //查询渠道
+        PayChannel payChannel = payChannelService.selectPayChannel(channelId);
+        if(ObjectUtil.isEmpty(payChannel)){
+            return R.error("不支持此渠道的支付："+ channelId +"!");
+        }
+        WxPayUnifiedOrderRequest request = buildUnifiedOrderRequest(payOrder);
+        //下单
+        WxPayUnifiedOrderResult result  = weChatOrderService.unifiedOrder(request);
+        //更新订单表为支付中
+        int num = payOrderService.updateStatus4Ing(payOrderId, result.getPrepayId());
+        if(num == 0){
+            return R.error("微信支付更新订单表为支付中失败！");
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("payOrderId",payOrderId);
+        map.put("prepayId",result.getPrepayId());
+        Map<String, Object> resMap = buildParams(tradeType, result);
+        map.putAll(resMap);
+        return R.ok().put("data",map);
+    }
+
 
     /**
      * 关闭订单
@@ -195,6 +260,7 @@ public class WeChatOrderController {
      * @return
      * @throws WxPayException
      */
+    @RequestMapping("/downloadFundFlow")
     public R downloadFundFlow(@RequestBody Map<String,Object> params)throws WxPayException{
         //对账日期
         String billDate = (String) params.get("billDate");
@@ -206,5 +272,139 @@ public class WeChatOrderController {
     }
 
 
+    /**
+     * 下单参数转换
+     * @return
+     */
+    private WxPayUnifiedOrderRequest buildUnifiedOrderRequest(PayOrder payOrder){
+
+        //行政事项类型
+        String xzsxlx = payOrder.getXzsxlx();
+        Customer customer = customerService.getById(xzsxlx);
+        //通知地址
+        String notifyUrl = customer.getCcNotifyUrl();
+
+        String tradeType = payOrder.getChannelId();
+
+        String payOrderId = payOrder.getPayOrderId();
+        // 支付金额,单位分
+        Integer totalFee = payOrder.getAmount().intValue();
+        //设备
+        String deviceInfo = payOrder.getDevice();
+        String body = payOrder.getBody();
+        String detail = null;
+        String attach = null;
+        String outTradeNo = payOrderId;
+        String feeType = "CNY";
+        String spBillCreateIP = payOrder.getClientIp();
+        String timeStart = null;
+        String timeExpire = null;
+        String goodsTag = null;
+        String productId = null;
+        if(tradeType.equals(PayConstant.WxConstant.TRADE_TYPE_NATIVE)){
+            productId = payOrder.getProductId();
+        }
+        String limitPay = null;
+        String openId = null;
+        if(tradeType.equals(PayConstant.WxConstant.TRADE_TYPE_JSPAI)){
+            openId = payOrder.getOpenId();
+        }
+        String sceneInfo = null;
+        if(tradeType.equals(PayConstant.WxConstant.TRADE_TYPE_MWEB)){
+            sceneInfo = payOrder.getSceneInfo();
+        }
+        // 微信统一下单请求对象
+        WxPayUnifiedOrderRequest request = new WxPayUnifiedOrderRequest();
+        request.setDeviceInfo(deviceInfo);
+        request.setBody(body);
+        request.setDetail(detail);
+        request.setAttach(attach);
+        request.setOutTradeNo(outTradeNo);
+        request.setFeeType(feeType);
+        request.setTotalFee(totalFee);
+        request.setSpbillCreateIp(spBillCreateIP);
+        request.setTimeStart(timeStart);
+        request.setTimeExpire(timeExpire);
+        request.setGoodsTag(goodsTag);
+        request.setNotifyURL(notifyUrl);
+        request.setTradeType(tradeType);
+        request.setProductId(productId);
+        request.setLimitPay(limitPay);
+        request.setOpenid(openId);
+        request.setSceneInfo(sceneInfo);
+        return request;
+    }
+
+    /**
+     * 微信下单返回前端参数
+     * @param tradeType
+     * @param wxPayUnifiedOrderResult
+     * @return
+     */
+    private Map<String,Object> buildParams(String tradeType,WxPayUnifiedOrderResult wxPayUnifiedOrderResult){
+        Map<String,Object> resultMap = new HashMap<>();
+        switch (tradeType) {
+            //二维码支付
+            case PayConstant.WxConstant.TRADE_TYPE_NATIVE: {
+                // 二维码支付链接
+                resultMap.put("codeUrl", wxPayUnifiedOrderResult.getCodeURL());
+                break;
+            }
+            //APP支付
+            case PayConstant.WxConstant.TRADE_TYPE_APP: {
+                Map<String, String> payInfo = new HashMap<>();
+                String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
+                String nonceStr = String.valueOf(System.currentTimeMillis());
+                // APP支付绑定的是微信开放平台上的账号，APPID为开放平台上绑定APP后发放的参数
+                String appId = wxPayProperties.getAppId();
+                Map<String, String> configMap = new HashMap<>();
+                // 此map用于参与调起sdk支付的二次签名,格式全小写，timestamp只能是10位,格式固定，切勿修改
+                String partnerId = wxPayProperties.getMchId();
+                configMap.put("prepayid", wxPayUnifiedOrderResult.getPrepayId());
+                configMap.put("partnerid", partnerId);
+                String packageValue = "Sign=WXPay";
+                configMap.put("package", packageValue);
+                configMap.put("timestamp", timestamp);
+                configMap.put("noncestr", nonceStr);
+                configMap.put("appid", appId);
+                // 此map用于客户端与微信服务器交互
+                payInfo.put("sign", SignUtils.createSign(configMap, wxPayProperties.getMchKey(), null));
+                payInfo.put("prepayId", wxPayUnifiedOrderResult.getPrepayId());
+                payInfo.put("partnerId", partnerId);
+                payInfo.put("appId", appId);
+                payInfo.put("packageValue", packageValue);
+                payInfo.put("timeStamp", timestamp);
+                payInfo.put("nonceStr", nonceStr);
+                resultMap.put("payParams", payInfo);
+                break;
+            }
+            //JSAPI支付
+            case PayConstant.WxConstant.TRADE_TYPE_JSPAI: {
+                Map<String, String> payInfo = new HashMap<>();
+                String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
+                String nonceStr = String.valueOf(System.currentTimeMillis());
+                payInfo.put("appId", wxPayUnifiedOrderResult.getAppid());
+                // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+                payInfo.put("timeStamp", timestamp);
+                payInfo.put("nonceStr", nonceStr);
+                payInfo.put("package", "prepay_id=" + wxPayUnifiedOrderResult.getPrepayId());
+                payInfo.put("signType", WxPayConstants.SignType.MD5);
+                payInfo.put("paySign", SignUtils.createSign(payInfo, wxPayProperties.getMchKey(), null));
+                resultMap.put("payParams", payInfo);
+                break;
+            }
+            //H5支付
+            case PayConstant.WxConstant.TRADE_TYPE_MWEB: {
+                // h5支付链接地址
+                resultMap.put("payUrl", wxPayUnifiedOrderResult.getMwebUrl());
+                break;
+            }
+            default: {
+
+            }
+
+        }
+        return resultMap;
+    }
 
 }

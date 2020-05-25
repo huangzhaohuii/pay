@@ -4,10 +4,8 @@ import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayReportRequest;
-import com.github.binarywang.wxpay.bean.result.WxPayBillResult;
-import com.github.binarywang.wxpay.bean.result.WxPayOrderCloseResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundQueryResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.*;
 import com.github.binarywang.wxpay.exception.WxPayException;
 
 import java.util.Date;
@@ -19,6 +17,15 @@ import java.util.Date;
  * @since 1.0.0
  */
 public interface WeChatOrderService {
+
+    /**
+     * 微信下单
+     * @param request
+     * @return
+     * @throws WxPayException
+     */
+    WxPayUnifiedOrderResult unifiedOrder(WxPayUnifiedOrderRequest request) throws WxPayException;
+
     /**
      * 关闭订单
      *  应用场景

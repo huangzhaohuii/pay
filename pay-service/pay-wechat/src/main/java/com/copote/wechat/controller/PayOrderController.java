@@ -3,6 +3,7 @@ package com.copote.wechat.controller;
 import com.copote.common.constant.PayConstant;
 import com.copote.common.exception.R;
 import com.copote.wechat.entity.PayOrder;
+import com.copote.wechat.service.NotifyService;
 import com.copote.wechat.service.PayOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,7 @@ public class PayOrderController extends Notify4BasePay {
 
     @Autowired
     private PayOrderService payOrderService;
+
 
     /**
      * 创建订单

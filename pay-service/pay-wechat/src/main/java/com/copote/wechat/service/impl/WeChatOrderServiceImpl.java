@@ -6,10 +6,8 @@ import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayQueryCommentRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayReportRequest;
-import com.github.binarywang.wxpay.bean.result.WxPayBillResult;
-import com.github.binarywang.wxpay.bean.result.WxPayOrderCloseResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundQueryResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.*;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +27,11 @@ public class WeChatOrderServiceImpl implements WeChatOrderService {
     @Autowired
     private WxPayService wxPayService;
 
+
+    @Override
+    public WxPayUnifiedOrderResult unifiedOrder(WxPayUnifiedOrderRequest request) throws WxPayException {
+        return wxPayService.unifiedOrder(request);
+    }
 
     @Override
     public WxPayOrderCloseResult closeOrder(String outTradeNo) throws WxPayException {

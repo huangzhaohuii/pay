@@ -7,8 +7,8 @@ import com.copote.common.util.PayDigestUtil;
 import com.copote.common.util.XXPayUtil;
 import com.copote.wechat.entity.MchInfo;
 import com.copote.wechat.entity.PayOrder;
-import com.copote.wechat.mq.Mq4PayNotify;
 import com.copote.wechat.service.MchInfoService;
+import com.copote.wechat.service.NotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ public class Notify4BasePay {
 	private static final MyLog _log = MyLog.getLog(Notify4BasePay.class);
 
 	@Autowired
-	private Mq4PayNotify mq4PayNotify;
+	private NotifyService notifyService;
 
 	@Autowired
 	private MchInfoService mchInfoService;
@@ -121,7 +121,7 @@ public class Notify4BasePay {
 		// 发起后台通知业务系统
 		JSONObject object = createNotifyInfo(payOrder);
 		try {
-			mq4PayNotify.send(object.toJSONString());
+            notifyService.send(object.toJSONString());
 		} catch (Exception e) {
 			_log.error("payOrderId={},sendMessage error.", payOrder != null ? payOrder.getPayOrderId() : "", e);
 		}

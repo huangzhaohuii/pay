@@ -3,7 +3,6 @@ package com.copote.wechat.controller;
 import cn.hutool.core.util.ObjectUtil;
 import com.copote.common.constant.PayConstant;
 import com.copote.common.util.MyLog;
-import com.copote.wechat.channel.wechat.WxPayUtil;
 import com.copote.wechat.entity.Customer;
 import com.copote.wechat.entity.PayChannel;
 import com.copote.wechat.entity.PayOrder;
@@ -39,7 +38,7 @@ import java.util.Map;
  */
 @RestController
 @Slf4j
-public class Notify4WxPayController extends Notify4BasePay {
+public class Notify4WxPayController{
 
 	private static final MyLog _log = MyLog.getLog(Notify4WxPayController.class);
 
@@ -95,7 +94,7 @@ public class Notify4WxPayController extends Notify4BasePay {
 				payOrder.setStatus(PayConstant.PAY_STATUS_SUCCESS);
 			}
 			// 业务系统后端通知
-			doNotify(payOrder);
+//			doNotify(payOrder);
 			_log.info("====== 完成接收微信支付回调通知 ======");
 			return WxPayNotifyResponse.success("处理成功");
 		} catch (WxPayException e) {
